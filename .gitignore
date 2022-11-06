@@ -1,0 +1,58 @@
+# macOS
+.DS_Store
+
+# Env variables
+*.env*
+!sample.env*
+
+# Zip
+*.zip
+
+# Models
+datasets/
+results/
+tensorboard_log/
+
+# Include all trained models
+!**/trained_models/**
+
+# Documentation
+doc/**
+!doc/Doxyfile
+*.dvi
+*.log
+*.blg
+*.bbl
+*.toc
+*.aux
+*.out
+*.lof
+*.ptc
+
+# Materials
+others/
+
+# IDE
+.idea/
+
+# Caches
+__pycache__/
+.cache/
+
+# venv
+venv/
+venv_2/
+
+# Logs
+logs/
+
+# Vim
+tags
+
+# Package code
+*.egg-info/
+
+# Images
+*.jpg
+*.jpeg
+*.png
