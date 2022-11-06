@@ -108,7 +108,7 @@ typedef struct snake_s {
     unsigned int body1 ;           // Snake body1 pixel on display
     unsigned int body2 ;           // Snake body2 pixel on display
     unsigned int tail  ;           // Snake tail pixel on display
-    unsigned int speed;           // Snake speed
+    int speed;           // Snake speed
     enum MOVE_DIRECTION direction; // Snake direction
 } snake_t;
 
@@ -177,7 +177,7 @@ void SystemConfig() {
     NVIC_EnableIRQ(PIT0_IRQn);
     NVIC_SetPriority(PIT0_IRQn, 1);
     PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TIE_MASK; // enable interrupts
-    PIT->CHANNEL[0].LDVAL = 0x5f5e0ff;
+    PIT->CHANNEL[0].LDVAL = 0x5fff;
     PIT->CHANNEL[0].TCTRL |= PIT_TCTRL_TEN_MASK; // start the PIT
 }
 
@@ -378,8 +378,11 @@ void PORTE_IRQHandler(void) {
     }
 
     // Speed
-    if      (IS_CLICK_RIGHT && snake.speed > 0) { snake.speed = snake.speed - 50; }
-    else if (IS_CLICK_LEFT && snake.speed < 500) { snake.speed = snake.speed + 50; }
+    if (IS_CLICK_RIGHT && snake.speed > 50) {
+            snake.speed -= 50;
+    } else if (IS_CLICK_LEFT && snake.speed < 350) {
+        snake.speed += 50;
+    }
 
     // Restart game
     if (IS_CLICK_START_STOP) {
@@ -387,7 +390,7 @@ void PORTE_IRQHandler(void) {
     }
 
     //
-    delay(tdelay1, 5);
+    delay(tdelay1, 4);
 }
 
 /**

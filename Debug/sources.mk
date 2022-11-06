@@ -24,6 +24,20 @@ S_UPPER_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+others/test1/Sources \
+others/test1/Project_Settings/Startup_Code \
+others/test1/Debug/Sources \
+others/test1/Debug/Project_Settings/Startup_Code \
+others/test/Sources \
+others/test/Project_Settings/Startup_Code \
+others/test/Debug/Sources \
+others/test/Debug/Project_Settings/Startup_Code \
+others/Morse-Code-Encoder/utilities \
+others/Morse-Code-Encoder/startup \
+others/Morse-Code-Encoder/source \
+others/Morse-Code-Encoder/drivers \
+others/Morse-Code-Encoder/board \
+others/Morse-Code-Encoder/CMSIS \
 Sources \
 Project_Settings/Startup_Code \
 

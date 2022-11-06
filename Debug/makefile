@@ -8,6 +8,20 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
+-include others/test1/Sources/subdir.mk
+-include others/test1/Project_Settings/Startup_Code/subdir.mk
+-include others/test1/Debug/Sources/subdir.mk
+-include others/test1/Debug/Project_Settings/Startup_Code/subdir.mk
+-include others/test/Sources/subdir.mk
+-include others/test/Project_Settings/Startup_Code/subdir.mk
+-include others/test/Debug/Sources/subdir.mk
+-include others/test/Debug/Project_Settings/Startup_Code/subdir.mk
+-include others/Morse-Code-Encoder/utilities/subdir.mk
+-include others/Morse-Code-Encoder/startup/subdir.mk
+-include others/Morse-Code-Encoder/source/subdir.mk
+-include others/Morse-Code-Encoder/drivers/subdir.mk
+-include others/Morse-Code-Encoder/board/subdir.mk
+-include others/Morse-Code-Encoder/CMSIS/subdir.mk
 -include Sources/subdir.mk
 -include Project_Settings/Startup_Code/subdir.mk
 -include subdir.mk

@@ -1,0 +1,195 @@
+% Author: Zdeněk Lapeš <lapes.zdenek@gmail.com> (xlapes02)
+
+
+\documentclass[a4paper, 11pt]{article}
+
+
+%\usepackage[czech]{babel}
+\usepackage[british,UKenglish,USenglish,english,american]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage[left=2cm, top=3cm, text={17cm, 24cm}]{geometry}
+\usepackage{times}
+\usepackage{graphicx,wrapfig,lipsum}
+\usepackage{float}
+
+\usepackage[unicode]{hyperref}
+\usepackage[usenames, dvipsnames]{color} % color
+\graphicspath{ {images/} }
+\hypersetup{
+    colorlinks = true,
+    hypertexnames = false,
+    citecolor = red,
+}
+
+
+\begin{document}
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Titulní stránka %%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \begin{titlepage}
+        \begin{center}
+            \includegraphics[width=0.77\linewidth]{FIT_logo} \\
+
+            \vspace{\stretch{0.382}}
+
+            \Huge{Project dokumentation} \\
+            \LARGE{\textbf{
+                ARM\-FITkit3 či jiný HW: Hra HAD
+            }} \\
+            \Large{IMP \- Mikroprocesorové a~vestavěné systémy}
+
+            \vspace{\stretch{0.618}}
+        \end{center}
+
+        {\Large
+        \today
+        \hfill
+        Zdeněk Lapeš (xlapes02)
+
+            \hfill
+            \large{\textit{lapes.zdenek@gmail.com}}
+        }
+    \end{titlepage}
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Content %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \pagenumbering{roman}
+    \setcounter{page}{1}
+    \tableofcontents
+    \clearpage
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Setup First content page %%%%%%%%%%%%%%%%%%
+    \pagenumbering{arabic}
+    \setcounter{page}{1}
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Úvod %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \section{Introduction}\label{sec:introduction}
+    The task was to create a Snake Game for the ARM\-FITkit3 board based on
+    microcontroller Kinetis K60 (with ARM Cortex\-M4 core) and 2x matrix displays
+    (type: KWM\-30881AGB, decoder: 74HCT154).
+
+    The result is a Snake game that can be played on the board.
+    Snake is displayed on the matrix displays and the player can control
+    the snake using the \textit{Fitkit3} built\-in buttons.
+    Implemented game is a single player game, written in C language using
+    KDS IDE\cite{KDSIDE}.
+    \newline
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preparation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    %%%%% Preparation %%%%%
+
+
+    \section{Preparation}\label{sec:preparation}
+
+    %%%%% Hardware %%%%%
+
+    \subsection{Hardware}\label{subsec:hardware}
+    The provided HW for this project is \textit{Fitkit3} board and one
+    board with 2x matrix displays.
+    The board with two matrix displays 8x8 is connected to the
+    \textit{Fitkit3} board using the connectors
+        {\color{Green}{P1}} (placed on the Fitkit3 board) and connector
+        {\color{Red}{P3}} (placed on the matrix display's board).
+
+    \begin{figure}[h]
+        \centering
+        \includegraphics[width=0.75\textwidth]{equipments}
+        \caption{Fitkit3 board \& matrix display board}\label{fig:figure1}
+    \end{figure}
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Implementation %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \section{Implementation}\label{sec:implementation}
+    Implementation of the game is placed in only one file: \texttt{Sources/main.c}.
+    The other files were created by the KDS IDE for MCU K60.
+
+    %%%%% Game %%%%%
+
+    \subsection{Implementation of the game}\label{subsec:implementation-of-the-game}
+    Implemantation is divided into 2 parts:
+    \begin{itemize}
+        \item Button interrupt handling
+        \item Timer interrupt handling
+    \end{itemize}
+
+    {\parindent 0pt In the projects are used these component of
+    MCU K60 (\textit{K60P100M100SF2V2}):}
+    \begin{itemize}
+        \item \textbf{GPIO} (General Purpose Input/Output) \-
+        Setting in/out pins for controlling LED's matrix displays.
+        \item \textbf{PIT} (Periodic Interrupt Timer) \-
+        Timer for controlling snake moves.
+        Interrupt is generated every 0.24575 ms.
+        \item \textbf{PORTx} (Port Control and Interrupts) \- \textbf{PORTA} and \textbf{PORTE}.
+        PORTA is used for controlling LED matrix display a PORTB
+        for controlling button interrupts.
+    \end{itemize}
+
+    The entry point of the program is the function \texttt{main()} located in
+    \texttt{Source/main.c} file.
+    At the beginning of the program, the function \texttt{SystemConfig()} is called
+    where the clock for the \textbf{GPIO}, \textbf{PIT} and \textbf{PORTx} is enabled
+    and pins for the \textbf{PORTx} are set as needed for all interrupts and display
+    control.
+    After initialization the structure \texttt{snake\_t} is initialized and then
+    is continued to endless loop where the all incoming interrupts
+    from \textbf{PIT} timer and buttons generated on \textbf{PORTE} are handled.
+
+
+    %%%%% Button interrupt handling %%%%%
+
+    \subsection{How to play}\label{subsec:functionality-of-the-game}
+    The game is a single player game.
+
+    %%%%% Button control %%%%%
+
+    \subsubsection{Game Control}\label{subsubsec:controling}
+    The game is controlled by the \textit{Fitkit3} built\-in buttons:
+    \begin{itemize}
+        \item \textbf{SW2} \- Snake speed up.
+        \item \textbf{SW3} \- Snake turn right.
+        \item \textbf{SW4} \- Snake speed down.
+        \item \textbf{SW5} \- Snake turn left.
+        \item \textbf{SW6} \- Snake reset (default speed and starting position).
+    \end{itemize}
+
+    \begin{figure}[h!]
+        \centering
+        \includegraphics[width=0.5\textwidth]{buttons}
+        \caption{Fitkit3 Buttons}\label{fig:figure2}
+    \end{figure}
+
+    The Snake starts moving to the right with normal speed
+    at the beginning of the game.
+    By pressing the coressponding button, you can change the direction of the snake
+    and his speed.
+    If you want to reset the game, press the button \textbf{SW6}, which sets
+    the speed to the default value and places snake to the starting position.
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Conclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    %%%%% Conclusion %%%%%
+
+
+    \section{Conclusion}\label{sec:conclusion}
+    I managed to implement whole functionality of the game with some additional
+    features like speed up/down and reset\ref{subsubsec:controling}.
+    \href{https://youtu.be/3wGh9oV8RLc}{Video of the game is available on YouTube.}
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Citace %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    \clearpage
+    \bibliographystyle{bst/czechiso}
+    \renewcommand{\refname}{Literature}\label{sec:literatura}
+    \bibliography{manual}
+
+
+\end{document}

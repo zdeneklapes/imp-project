@@ -51,8 +51,3 @@ tags
 
 # Package code
 *.egg-info/
-
-# Images
-*.jpg
-*.jpeg
-*.png
