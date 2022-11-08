@@ -352,6 +352,9 @@ void PIT0_IRQHandler() {
  * @brief   Function for handle button interupts to set new snake direction
  */
 void PORTE_IRQHandler(void) {
+    //
+    delay(tdelay1, 1); // Filtering wobble
+
     // Clear interupt flags
     PORTE->ISFR = BTNs_ALL_MASK;
 
@@ -388,9 +391,6 @@ void PORTE_IRQHandler(void) {
     if (IS_CLICK_START_STOP) {
         init_snake_body_variables();
     }
-
-    //
-    delay(tdelay1, 4);
 }
 
 /**
