@@ -51,7 +51,7 @@ all: imp.elf secondary-outputs
 imp.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM C++ Linker'
-	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -T "MK60DN512xxx10_flash.ld" -Xlinker --gc-sections -L"/mnt/hgfs/my-drive-zdenda-lapes/0-todo/imp/imp/Project_Settings/Linker_Files" -Wl,-Map,"imp.map" -specs=nano.specs -specs=nosys.specs -o "imp.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -T "MK60DN512xxx10_flash.ld" -Xlinker --gc-sections -L"/mnt/hgfs/my-drive-zdenda-lapes/0-todo/imp-project/Project_Settings/Linker_Files" -Wl,-Map,"imp.map" -specs=nano.specs -specs=nosys.specs -o "imp.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

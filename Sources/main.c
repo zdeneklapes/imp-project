@@ -207,10 +207,10 @@ void delay(int t1, int t2) {
  */
 unsigned char get_column_from_display(unsigned int position) {
     unsigned char number = 0x00;
-    number |= ((position & A0) >> (A0_PIN - A0_OFSET));
-    number |= ((position & A1) >> (A1_PIN - A1_OFSET));
-    number |= ((position & A2) >> (A2_PIN - A2_OFSET));
-    number |= ((position & A3) >> (A3_PIN - A3_OFSET));
+    number |= ((position & A0) >> (A0_PIN - A0_OFSET)); // will be 0 bit
+    number |= ((position & A1) >> (A1_PIN - A1_OFSET)); // will be 1 bit
+    number |= ((position & A2) >> (A2_PIN - A2_OFSET)); // will be 2 bit
+    number |= ((position & A3) >> (A3_PIN - A3_OFSET)); // will be 3 bit
     return number;
 }
 
@@ -233,14 +233,14 @@ unsigned int get_display_from_column(unsigned char column) {
  */
 unsigned char get_row_from_display(unsigned int position) {
     unsigned char number = 0x00;
-    number |= ((position & R0) >> (R0_PIN - R0_OFSET));
-    number |= ((position & R1) >> (R1_PIN - R1_OFSET));
-    number |= ((position & R2) >> (R2_PIN - R2_OFSET));
-    number |= ((position & R3) >> (R3_PIN - R3_OFSET));
-    number |= ((position & R4) >> (R4_PIN - R4_OFSET));
-    number |= ((position & R5) >> (R5_PIN - R5_OFSET));
-    number |= ((position & R6) >> (R6_PIN - R6_OFSET));
-    number |= ((position & R7) >> (R7_PIN - R7_OFSET));
+    number |= ((position & R0) >> (R0_PIN - R0_OFSET)); // will be 0 bit
+    number |= ((position & R1) >> (R1_PIN - R1_OFSET)); // will be 1 bit
+    number |= ((position & R2) >> (R2_PIN - R2_OFSET)); // will be 2 bit
+    number |= ((position & R3) >> (R3_PIN - R3_OFSET)); // will be 3 bit
+    number |= ((position & R4) >> (R4_PIN - R4_OFSET)); // will be 4 bit
+    number |= ((position & R5) >> (R5_PIN - R5_OFSET)); // will be 5 bit
+    number |= ((position & R6) >> (R6_PIN - R6_OFSET)); // will be 6 bit
+    number |= ((position & R7) >> (R7_PIN - R7_OFSET)); // will be 7 bit
     return number;
 }
 
@@ -261,6 +261,13 @@ unsigned int get_display_from_row(unsigned char row) {
     return number;
 }
 
+void set_new_snake_position(unsigned int new_row, unsigned int new_column) {
+    snake.tail = snake.body2;
+    snake.body2 = snake.body1;
+    snake.body1 = snake.head;
+    snake.head = new_row | new_column;
+}
+
 /**
  * @brief   Function for set snake pixel
  */
@@ -269,10 +276,7 @@ void move_right() {
     unsigned char column = get_column_from_display(snake.head);
     unsigned int new_row = get_display_from_row(row);
     unsigned int new_column = get_display_from_column(column + 1);
-    snake.tail = snake.body2;
-    snake.body2 = snake.body1;
-    snake.body1 = snake.head;
-    snake.head = new_row | new_column;
+    set_new_snake_position(new_row, new_column);
 }
 
 /**
@@ -283,10 +287,7 @@ void move_left() {
     unsigned char column = get_column_from_display(snake.head);
     unsigned int new_row = get_display_from_row(row);
     unsigned int new_column = get_display_from_column(column - 1);
-    snake.tail = snake.body2;
-    snake.body2 = snake.body1;
-    snake.body1 = snake.head;
-    snake.head = new_row | new_column;
+    set_new_snake_position(new_row, new_column);
 }
 
 /**
@@ -297,10 +298,7 @@ void move_up() {
     unsigned char column = get_column_from_display(snake.head);
     unsigned int new_row = get_display_from_row((row >> 1) ? (row >> 1) : row >> 1 | 0x80);
     unsigned int new_column = get_display_from_column(column);
-    snake.tail = snake.body2;
-    snake.body2 = snake.body1;
-    snake.body1 = snake.head;
-    snake.head = new_row | new_column;
+    set_new_snake_position(new_row, new_column);
 }
 
 /**
@@ -311,10 +309,7 @@ void move_down() {
     unsigned char column = get_column_from_display(snake.head);
     unsigned int new_row = get_display_from_row((row << 1) ? (row << 1) : 0x01);
     unsigned int new_column = get_display_from_column(column);
-    snake.tail = snake.body2;
-    snake.body2 = snake.body1;
-    snake.body1 = snake.head;
-    snake.head = new_row | new_column;
+    set_new_snake_position(new_row, new_column);
 }
 
 /**
