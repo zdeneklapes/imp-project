@@ -76,8 +76,9 @@
 #define BTN_SW4         0x8000000 // Port E, bit 27
 #define BTN_SW5         0x4000000 // Port E, bit 26
 #define BTN_SW6         0x800     // Port E, bit 11
-#define BTN_IRQC_MASK   0x080000
+#define BTN_IRQC_MASK   0x0A  // 1010 0 0 0 0
 #define BTNs_ALL_MASK   (BTN_SW2 | BTN_SW3 | BTN_SW4 | BTN_SW5 | BTN_SW6)
+#define IS_BTN_INTERRUPT_WOBBLE (GPIOE_PDIR & BTNs_ALL_MASK)
 
 // FITKIT Clicked Buttons
 #define IS_CLICK_RIGHT      (PORTE->ISFR & BTN_SW2)
@@ -164,11 +165,11 @@ void SystemConfig() {
     // Buttons setup - interupts
     NVIC_EnableIRQ(PORTE_IRQn);
     NVIC_SetPriority(PORTE_IRQn, 0);
-    PORTE->PCR[10] |= BTN_IRQC_MASK;
-    PORTE->PCR[11] |= BTN_IRQC_MASK;
-    PORTE->PCR[12] |= BTN_IRQC_MASK;
-    PORTE->PCR[26] |= BTN_IRQC_MASK;
-    PORTE->PCR[27] |= BTN_IRQC_MASK;
+    PORTE->PCR[10] |= PORT_PCR_IRQC(BTN_IRQC_MASK);
+    PORTE->PCR[11] |= PORT_PCR_IRQC(BTN_IRQC_MASK);
+    PORTE->PCR[12] |= PORT_PCR_IRQC(BTN_IRQC_MASK);
+    PORTE->PCR[26] |= PORT_PCR_IRQC(BTN_IRQC_MASK);
+    PORTE->PCR[27] |= PORT_PCR_IRQC(BTN_IRQC_MASK);
 
     // Timer setup
     SIM->SCGC6 |= SIM_SCGC6_PIT_MASK;
@@ -352,11 +353,14 @@ void PIT0_IRQHandler() {
  * @brief   Function for handle button interupts to set new snake direction
  */
 void PORTE_IRQHandler(void) {
-    //
-    delay(tdelay1, 1); // Filtering wobble
+    // Wobble
+    if (IS_BTN_INTERRUPT_WOBBLE == 0) {
+        // Clear interupt flags
+        PORTE->ISFR = BTNs_ALL_MASK;
+        return;
+    }
 
-    // Clear interupt flags
-    PORTE->ISFR = BTNs_ALL_MASK;
+    delay(tdelay1/100, 1); // Filtering wobble
 
     // BTN_DOWN
     if (IS_CLICK_DOWN && snake.direction == UP   ) {
@@ -391,6 +395,9 @@ void PORTE_IRQHandler(void) {
     if (IS_CLICK_START_STOP) {
         init_snake_body_variables();
     }
+
+    // Clear interupt flags
+    PORTE->ISFR = BTNs_ALL_MASK;
 }
 
 /**

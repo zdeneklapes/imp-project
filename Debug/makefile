@@ -8,20 +8,6 @@ RM := rm -rf
 
 # All of the sources participating in the build are defined here
 -include sources.mk
--include others/test1/Sources/subdir.mk
--include others/test1/Project_Settings/Startup_Code/subdir.mk
--include others/test1/Debug/Sources/subdir.mk
--include others/test1/Debug/Project_Settings/Startup_Code/subdir.mk
--include others/test/Sources/subdir.mk
--include others/test/Project_Settings/Startup_Code/subdir.mk
--include others/test/Debug/Sources/subdir.mk
--include others/test/Debug/Project_Settings/Startup_Code/subdir.mk
--include others/Morse-Code-Encoder/utilities/subdir.mk
--include others/Morse-Code-Encoder/startup/subdir.mk
--include others/Morse-Code-Encoder/source/subdir.mk
--include others/Morse-Code-Encoder/drivers/subdir.mk
--include others/Morse-Code-Encoder/board/subdir.mk
--include others/Morse-Code-Encoder/CMSIS/subdir.mk
 -include Sources/subdir.mk
 -include Project_Settings/Startup_Code/subdir.mk
 -include subdir.mk
@@ -65,7 +51,7 @@ all: imp.elf secondary-outputs
 imp.elf: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross ARM C++ Linker'
-	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -T "MK60DN512xxx10_flash.ld" -Xlinker --gc-sections -L"/mnt/hgfs/my-drive-zdenda-lapes/0-todo/imp-prj/imp/Project_Settings/Linker_Files" -Wl,-Map,"imp.map" -specs=nano.specs -specs=nosys.specs -o "imp.elf" $(OBJS) $(USER_OBJS) $(LIBS)
+	arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections  -g3 -T "MK60DN512xxx10_flash.ld" -Xlinker --gc-sections -L"/mnt/hgfs/my-drive-zdenda-lapes/0-todo/imp/imp/Project_Settings/Linker_Files" -Wl,-Map,"imp.map" -specs=nano.specs -specs=nosys.specs -o "imp.elf" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 
