@@ -296,7 +296,7 @@ void move_left() {
 void move_up() {
     unsigned char row = get_row_from_display(snake.head);
     unsigned char column = get_column_from_display(snake.head);
-    unsigned int new_row = get_display_from_row((row >> 1) ? (row >> 1) : row >> 1 | 0x80);
+    unsigned int new_row = get_display_from_row((row >> 1) ? (row >> 1) : 0x80);
     unsigned int new_column = get_display_from_column(column);
     set_new_snake_position(new_row, new_column);
 }
@@ -307,6 +307,8 @@ void move_up() {
 void move_down() {
     unsigned char row = get_row_from_display(snake.head);
     unsigned char column = get_column_from_display(snake.head);
+
+    // TODO: Fix delay to go to the first pixel
     unsigned int new_row = get_display_from_row((row << 1) ? (row << 1) : 0x01);
     unsigned int new_column = get_display_from_column(column);
     set_new_snake_position(new_row, new_column);
