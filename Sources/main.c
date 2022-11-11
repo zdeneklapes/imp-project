@@ -76,7 +76,7 @@
 #define BTN_SW4         0x8000000 // Port E, bit 27
 #define BTN_SW5         0x4000000 // Port E, bit 26
 #define BTN_SW6         0x800     // Port E, bit 11
-#define BTN_IRQC_MASK   0x0A  // 1010 0 0 0 0
+#define BTN_IRQC_MASK   0x0A      // on falling edge 1010 0 0 0 0
 #define BTNs_ALL_MASK   (BTN_SW2 | BTN_SW3 | BTN_SW4 | BTN_SW5 | BTN_SW6)
 #define IS_BTN_INTERRUPT_WOBBLE (GPIOE_PDIR & BTNs_ALL_MASK)
 
