@@ -510,10 +510,10 @@ LOAD /opt/Freescale/KDS_v3/toolchain/bin/../lib/gcc/arm-none-eabi/4.8.4/armv7e-m
                 0x00000001                ASSERT ((__StackLimit >= __HeapLimit), region m_data_2 overflowed with stack and heap)
 OUTPUT(imp.elf elf32-littlearm)
 
-.debug_info     0x00000000     0x136c
+.debug_info     0x00000000     0x1370
  .debug_info    0x00000000      0xe3f ./Sources/main.o
- .debug_info    0x00000e3f       0x90 ./Project_Settings/Startup_Code/startup_MK60D10.o
- .debug_info    0x00000ecf      0x49d ./Project_Settings/Startup_Code/system_MK60D10.o
+ .debug_info    0x00000e3f       0x94 ./Project_Settings/Startup_Code/startup_MK60D10.o
+ .debug_info    0x00000ed3      0x49d ./Project_Settings/Startup_Code/system_MK60D10.o
 
 .debug_abbrev   0x00000000      0x3b6
  .debug_abbrev  0x00000000      0x288 ./Sources/main.o
@@ -571,11 +571,11 @@ OUTPUT(imp.elf elf32-littlearm)
  .debug_line    0x00000532       0x78 ./Project_Settings/Startup_Code/startup_MK60D10.o
  .debug_line    0x000005aa      0x25f ./Project_Settings/Startup_Code/system_MK60D10.o
 
-.debug_str      0x00000000    0x92fec
+.debug_str      0x00000000    0x92fb7
  .debug_str     0x00000000    0x92ec2 ./Sources/main.o
                               0x930e9 (size before relaxing)
- .debug_str     0x00092ec2      0x12a ./Project_Settings/Startup_Code/system_MK60D10.o
-                              0x9047d (size before relaxing)
+ .debug_str     0x00092ec2       0xf5 ./Project_Settings/Startup_Code/system_MK60D10.o
+                              0x90481 (size before relaxing)
 
 .comment        0x00000000       0x70
  .comment       0x00000000       0x70 ./Sources/main.o
