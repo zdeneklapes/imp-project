@@ -15,7 +15,8 @@
 #include "stdbool.h"
 
 /******************************************************************************/
-/*                                  MACROS                                    */
+/*
+ *        MACROS                                    */
 /******************************************************************************/
 /* Macros for bit-level registers manipulation */
 #define GPIO_PIN_MASK 0x1Fu // unsigned int (0000 0000 | 0000 0000 | 0000 0001 | 1111 1111)
@@ -151,6 +152,7 @@ void SystemConfig() {
 
     /* Set corresponding PTE pins (output enable of 74HC154) for GPIO functionality */
     PORTE->PCR[28] = (0 | PORT_PCR_MUX(0x02));  // #EN
+    /* PORTE->PCR[28] = (0 | PORT_PCR_MUX(0x01));  // #EN */
 
     // Buttons
     PORTE->PCR[10] = PORT_PCR_MUX(0x01); // SW2
