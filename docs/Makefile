@@ -6,6 +6,9 @@
 #===========================================
 # asi budete chtit prejmenovat / you will probably rename:
 CO=manual
+OUT_DIR=./out
+FLAGS=-synctex=1 -output-directory=$(OUT_DIR)
+
 
 all: $(CO).pdf
 
@@ -15,10 +18,11 @@ $(CO).ps: $(CO).dvi
 	dvips $(CO)
 
 $(CO).pdf: clean
-	pdflatex $(CO)
-	bibtex $(CO)
-	pdflatex $(CO)
-	pdflatex $(CO)
+	mkdir $(OUT_DIR)
+	pdflatex $(FLAGS) $(CO)
+	bibtex   $(OUT_DIR)/$(CO)
+	pdflatex $(FLAGS) $(CO)
+	pdflatex $(FLAGS) $(CO)
 
 $(CO).dvi: $(CO).tex $(CO).bib
 	latex $(CO)
@@ -29,6 +33,7 @@ $(CO).dvi: $(CO).tex $(CO).bib
 clean:
 	rm -f *.dvi *.log $(CO).blg $(CO).bbl $(CO).toc *.aux $(CO).out $(CO).lof $(CO).ptc
 	rm -f $(CO).pdf
+	rm -rfd out
 	rm -f *~
 
 pack:
