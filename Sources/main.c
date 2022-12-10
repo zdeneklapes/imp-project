@@ -106,10 +106,10 @@ enum MOVE_DIRECTION {
 };
 
 typedef struct snake_s {
-    unsigned int head  ;           // Snake head pixel on display
-    unsigned int body1 ;           // Snake body1 pixel on display
-    unsigned int body2 ;           // Snake body2 pixel on display
-    unsigned int tail  ;           // Snake tail pixel on display
+    unsigned int head;           // Snake head pixel on display
+    unsigned int body1;           // Snake body1 pixel on display
+    unsigned int body2;           // Snake body2 pixel on display
+    unsigned int tail;           // Snake tail pixel on display
     int speed;           // Snake speed
     enum MOVE_DIRECTION direction; // Snake direction
 } snake_t;
@@ -188,10 +188,10 @@ void SystemConfig() {
  * @brief   Function for initialization of the snake structure
  */
 void init_snake_body_variables() {
-    snake.tail  = (R4 | A0);
+    snake.tail = (R4 | A0);
     snake.body2 = (R4 | A1);
     snake.body1 = (R4 | A0 | A1);
-    snake.head  = (R4 | A2);
+    snake.head = (R4 | A2);
     snake.speed = 200;
     snake.direction = RIGHT;
 }
@@ -200,7 +200,7 @@ void init_snake_body_variables() {
  * @brief   Function for waiting
  */
 void delay(int t1, int t2) {
-    for (int i = 0; i < t1; i++) for (int j = 0; j < t2; j++) ;
+    for (int i = 0; i < t1; i++) for (int j = 0; j < t2; j++);
 }
 
 /**
@@ -320,7 +320,7 @@ void move_down() {
  * @brief   Function for handle timer interupt for update snake position
  */
 void PIT0_IRQHandler() {
-    int column_number = i%4;
+    int column_number = i % 4;
 
     // Clear the timer's interrupt flag
     PIT->CHANNEL[0].TFLG = 0x1;
@@ -338,10 +338,10 @@ void PIT0_IRQHandler() {
 
     // Place snake onto LED display
     ENABLE_LED_WRITE;
-    if      (column_number == 0) { PTA->PDOR = snake.head ; }
+    if (column_number == 0) { PTA->PDOR = snake.head; }
     else if (column_number == 1) { PTA->PDOR = snake.body1; }
     else if (column_number == 2) { PTA->PDOR = snake.body2; }
-    else if (column_number == 3) { PTA->PDOR = snake.tail ; }
+    else if (column_number == 3) { PTA->PDOR = snake.tail; }
     DISABLE_LED_WRITE;
 
     //
@@ -359,25 +359,25 @@ void PORTE_IRQHandler(void) {
         return;
     }
 
-    delay(tdelay1/100, 1); // Filtering wobble
+    delay(tdelay1 / 100, 1); // Filtering wobble
 
     // BTN_DOWN
-    if (IS_CLICK_DOWN && snake.direction == UP   ) {
+    if (IS_CLICK_DOWN && snake.direction == UP) {
         snake.direction = RIGHT;
-    } else if (IS_CLICK_DOWN && snake.direction == DOWN ) {
+    } else if (IS_CLICK_DOWN && snake.direction == DOWN) {
         snake.direction = LEFT;
-    } else if (IS_CLICK_DOWN && snake.direction == LEFT ) {
+    } else if (IS_CLICK_DOWN && snake.direction == LEFT) {
         snake.direction = UP;
     } else if (IS_CLICK_DOWN && snake.direction == RIGHT) {
         snake.direction = DOWN;
     }
 
     // BTN_UP
-    if (IS_CLICK_UP && snake.direction == UP   ) {
+    if (IS_CLICK_UP && snake.direction == UP) {
         snake.direction = LEFT;
-    } else if (IS_CLICK_UP && snake.direction == DOWN ) {
+    } else if (IS_CLICK_UP && snake.direction == DOWN) {
         snake.direction = RIGHT;
-    } else if (IS_CLICK_UP && snake.direction == LEFT ) {
+    } else if (IS_CLICK_UP && snake.direction == LEFT) {
         snake.direction = DOWN;
     } else if (IS_CLICK_UP && snake.direction == RIGHT) {
         snake.direction = UP;
@@ -385,7 +385,7 @@ void PORTE_IRQHandler(void) {
 
     // Speed
     if (IS_CLICK_RIGHT && snake.speed > 50) {
-            snake.speed -= 50;
+        snake.speed -= 50;
     } else if (IS_CLICK_LEFT && snake.speed < 350) {
         snake.speed += 50;
     }
@@ -410,7 +410,7 @@ int main(void) {
     init_snake_body_variables();
 
     //
-    while (1) {;} // Never exit
+    while (1) { ; } // Never exit
 
     //
     return 0;

@@ -11,9 +11,12 @@
 \usepackage{times}
 \usepackage{graphicx,wrapfig,lipsum}
 \usepackage{float}
-
 \usepackage[unicode]{hyperref}
 \usepackage[usenames, dvipsnames]{color} % color
+\usepackage{enumitem}
+\usepackage{tabularx}
+\usepackage{booktabs}
+\usepackage{caption}
 \graphicspath{ {images/} }
 \hypersetup{
     colorlinks = true,
@@ -70,11 +73,10 @@
     microcontroller Kinetis K60 (with ARM Cortex\-M4 core) and 2x matrix displays
     (type: KWM\-30881AGB, decoder: 74HCT154).
 
-    The result is a Snake game that can be played on the board.
-    Snake is displayed on the matrix displays and the player can control
-    the snake using the \textit{Fitkit3} built\-in buttons.
-    Implemented game is a single player game, written in C language using
+    The result is a Snake game written in C language using
     KDS IDE\cite{KDSIDE}.
+    Snake is displayed on the matrix displays and the player can control
+    the snake using the \textit{Fitkit3} 5 built\-in buttons.
     \newline
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Preparation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -90,10 +92,11 @@
     \subsection{Hardware}\label{subsec:hardware}
     The provided HW for this project is \textit{Fitkit3} board and one
     board with 2x matrix displays.
-    The board with two matrix displays 8x8 is connected to the
+    The board with 2 matrix displays is connected to the
     \textit{Fitkit3} board using the connectors
         {\color{Green}{P1}} (placed on the Fitkit3 board) and connector
         {\color{Red}{P3}} (placed on the matrix display's board).
+    One matrix display is (8,8) so the total size of the display is (16,8).
 
     \begin{figure}[h]
         \centering
@@ -106,17 +109,21 @@
 
 
     \section{Implementation}\label{sec:implementation}
-    Implementation of the game is placed in only one file: \texttt{Sources/main.c}.
-    The other files were created by the KDS IDE for MCU K60.
+    Implementation of the game is inside file: \texttt{Sources/main.c}.
+    All other files were created by the KDS IDE for MCU K60.
 
-    %%%%% Game %%%%%
-
-    \subsection{Implementation of the game}\label{subsec:implementation-of-the-game}
     Implemantation is divided into 2 parts:
-    \begin{itemize}
-        \item Button interrupt handling
-        \item Timer interrupt handling
-    \end{itemize}
+    \newline
+
+    \subsection{Timer interrupt Handler:}
+    Snake next position is calculated here and display is
+    updated by calling one of the functions:
+    \texttt{move\_up()}, \texttt{move\_down()}, \texttt{move\_left()},
+    \texttt{move\_right()}.
+
+    \subsection{Button interrupt Handler}
+    Snake direction, speed and position is changed here according to the
+    pressed button.\\
 
     {\parindent 0pt In the projects are used these component of
     MCU K60 (\textit{K60P100M100SF2V2}):}
@@ -137,19 +144,24 @@
     where the clock for the \textbf{GPIO}, \textbf{PIT} and \textbf{PORTx} is enabled
     and pins for the \textbf{PORTx} are set as needed for all interrupts and display
     control.
-    After initialization the structure \texttt{snake\_t} is initialized and then
-    is continued to endless loop where the all incoming interrupts
-    from \textbf{PIT} timer and buttons generated on \textbf{PORTE} are handled.
+    After initialization the of the \texttt{snake\_t} structure
+    is continued to endless loop while the all incoming interrupts
+    by \textbf{PIT} timer and buttons are handled, using the functions
+    \texttt{PIT0\_IRQHandler()} and \texttt{PORTE\_IRQHandler()}.
 
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FUNCTIONALITY %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     %%%%% Button interrupt handling %%%%%
+
+
+    \section{Functionality}\label{sec:functionality}
 
     \subsection{How to play}\label{subsec:functionality-of-the-game}
     The game is a single player game.
 
     %%%%% Button control %%%%%
 
-    \subsubsection{Game Control}\label{subsubsec:controling}
+    \subsubsection{Game Control}\label{sbsubsec:controling}
     The game is controlled by the \textit{Fitkit3} built\-in buttons:
     \begin{itemize}
         \item \textbf{SW2} \- Snake speed up.
@@ -159,7 +171,7 @@
         \item \textbf{SW6} \- Snake reset (default speed and starting position).
     \end{itemize}
 
-    \begin{figure}[h!]
+    \begin{figure}[H]
         \centering
         \includegraphics[width=0.5\textwidth]{buttons}
         \caption{Fitkit3 Buttons}\label{fig:figure2}
@@ -167,22 +179,49 @@
 
     The Snake starts moving to the right with normal speed
     at the beginning of the game.
-    By pressing the coressponding button, you can change the direction of the snake
-    and his speed.
-    If you want to reset the game, press the button \textbf{SW6}, which sets
+    By pressing the coressponding button, you can change the snake speed and direction.
+    If you want reset the game, press the button \textbf{SW6}, which sets
     the speed to the default value and places snake to the starting position.
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Conclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-    %%%%% Conclusion %%%%%
-
-
     \section{Conclusion}\label{sec:conclusion}
+    The project was successfully completed and the game is working as expected.
     I managed to implement whole functionality of the game with some additional
     features like speed up/down and reset\ref{subsubsec:controling}.
-    \href{https://youtu.be/3wGh9oV8RLc}{Video of the game is available on YouTube.}
+    In project I used the timer interrupt for controlling the snake moves
+    and button interrupts for controlling the snake direction and speed.
+
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Autoevaluation %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+    \section{Autoevaluation}\label{sec:autoevaluation}
+    \begin{table}[H]
+        \centering
+        \caption{Autoevaluation}\label{tab:table1}
+        \label{tab:my_label}
+        \begin{tabularx}{\textwidth}{XXX}
+            \toprule
+            \textbf{Task}  & \textbf{Points} & \textbf{Description}                                                                                                      \\
+            \midrule
+            \textbf{E}     & 1               & I began long before the deadline and afterward I needed to fix some special cases, what I have learned from laboratories. \\
+            \hline
+            \textbf{F}     & 5               & The whole functionality requirements were covered.                                                                        \\
+            \hline
+            \textbf{Q}     & 3               & Code should be straightforward to understand almost everybody.                                                            \\
+            \hline
+            \textbf{P}     & 1               & Illustration of functionality can be watched on youtube \href{https://youtu.be/V0ONHRM66mM}{click here to watch}          \\
+            \hline
+            \textbf{D}     & 4               & All documentation requirements are covered.                                                                               \\
+            \hline
+            \textbf{Total} & 14              &                                                                                                                           \\
+            \bottomrule
+        \end{tabularx}
+
+    \end{table}
 
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Citace %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
