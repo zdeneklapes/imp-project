@@ -17,6 +17,8 @@
 \usepackage{tabularx}
 \usepackage{booktabs}
 \usepackage{caption}
+\usepackage{listings}
+
 \graphicspath{ {images/} }
 \hypersetup{
     colorlinks = true,
@@ -37,7 +39,7 @@
             \LARGE{\textbf{
                 ARM\-FITkit3 či jiný HW: Hra HAD
             }} \\
-            \Large{IMP \- Mikroprocesorové a~vestavěné systémy}
+            \Large{IMP \- Microprocessors and Embedded Systems}
 
             \vspace{\stretch{0.618}}
         \end{center}
@@ -112,8 +114,25 @@
     Implementation of the game is inside file: \texttt{Sources/main.c}.
     All other files were created by the KDS IDE for MCU K60.
 
-    Implemantation is divided into 2 parts:
-    \newline
+    The entry point of the program is the function \texttt{main()} located in
+    \texttt{Source/main.c} file.
+    At the beginning of the program, the function \texttt{SystemConfig()} is called
+    where the peripherals of MCU are configured:
+    \begin{itemize}
+        \item Configuration of PTA's pins (GPIO) for the matrix displays.
+        \item Configuration of PTE's pins (GPIO) for the buttons.
+        \item Configuration of PIT (used for timer).
+        \item Timer and Button interrupts are enabled.
+    \end{itemize}
+
+    After MCU configiration is \texttt{snake\_t} structure is initialized.
+    This structure contains all information about the snake:
+    \textbf{body}, \textbf{direction}, \textbf{speed}.
+
+    Then the game starts
+    by continue to endless loop, where all incoming interrupts
+    by \textbf{PIT} timer and buttons are handled, using the functions
+    \texttt{PIT0\_IRQHandler()} and \texttt{PORTE\_IRQHandler()}.
 
     \subsection{Timer interrupt Handler:}
     Snake next position is calculated here and display is
@@ -121,45 +140,115 @@
     \texttt{move\_up()}, \texttt{move\_down()}, \texttt{move\_left()},
     \texttt{move\_right()}.
 
+    \begin{lstlisting}[
+        language=C,
+        basicstyle=\small\ttfamily,
+        keywordstyle=\color{blue},
+        commentstyle=\color{green},
+        tabsize=2
+    ]
+void PIT0_IRQHandler() {
+    int column_number = i % 4;
+
+    // Clear the timer's interrupt flag
+    PIT->CHANNEL[0].TFLG = 0x1;
+
+    // Set new snake body position
+    if (snake.direction == RIGHT && TIMER_CHANGE_OFSET(i)) {
+        move_right();
+    } else if (snake.direction == UP && TIMER_CHANGE_OFSET(i)) {
+        move_up();
+    } else if (snake.direction == DOWN && TIMER_CHANGE_OFSET(i)) {
+        move_down();
+    } else if (snake.direction == LEFT && TIMER_CHANGE_OFSET(i)) {
+        move_left();
+    }
+
+    // Place snake onto LED display
+    ENABLE_LED_WRITE;
+    if (column_number == 0) { PTA->PDOR = snake.head; }
+    else if (column_number == 1) { PTA->PDOR = snake.body1; }
+    else if (column_number == 2) { PTA->PDOR = snake.body2; }
+    else if (column_number == 3) { PTA->PDOR = snake.tail; }
+    DISABLE_LED_WRITE;
+
+    //
+    i++;
+}
+    \end{lstlisting}
+
     \subsection{Button interrupt Handler}
     Snake direction, speed and position is changed here according to the
     pressed button.\\
 
-    {\parindent 0pt In the projects are used these component of
-    MCU K60 (\textit{K60P100M100SF2V2}):}
-    \begin{itemize}
-        \item \textbf{GPIO} (General Purpose Input/Output) \-
-        Setting in/out pins for controlling LED's matrix displays.
-        \item \textbf{PIT} (Periodic Interrupt Timer) \-
-        Timer for controlling snake moves.
-        Interrupt is generated every 0.24575 ms.
-        \item \textbf{PORTx} (Port Control and Interrupts) \- \textbf{PORTA} and \textbf{PORTE}.
-        PORTA is used for controlling LED matrix display a PORTB
-        for controlling button interrupts.
-    \end{itemize}
 
-    The entry point of the program is the function \texttt{main()} located in
-    \texttt{Source/main.c} file.
-    At the beginning of the program, the function \texttt{SystemConfig()} is called
-    where the clock for the \textbf{GPIO}, \textbf{PIT} and \textbf{PORTx} is enabled
-    and pins for the \textbf{PORTx} are set as needed for all interrupts and display
-    control.
-    After initialization the of the \texttt{snake\_t} structure
-    is continued to endless loop while the all incoming interrupts
-    by \textbf{PIT} timer and buttons are handled, using the functions
-    \texttt{PIT0\_IRQHandler()} and \texttt{PORTE\_IRQHandler()}.
+    \begin{lstlisting}[
+        language=C,
+        basicstyle=\small\ttfamily,
+        keywordstyle=\color{blue},
+        commentstyle=\color{green},
+        tabsize=2
+    ]
+void PORTE_IRQHandler(void) {
+    // Wobble
+    if (IS_BTN_INTERRUPT_WOBBLE == 0) {
+        // Clear interupt flags
+        PORTE->ISFR = BTNs_ALL_MASK;
+        return;
+    }
+
+    delay(tdelay1 / 100, 1); // Filtering wobble
+
+    // BTN_DOWN
+    if (IS_CLICK_DOWN && snake.direction == UP) {
+        snake.direction = RIGHT;
+    } else if (IS_CLICK_DOWN && snake.direction == DOWN) {
+        snake.direction = LEFT;
+    } else if (IS_CLICK_DOWN && snake.direction == LEFT) {
+        snake.direction = UP;
+    } else if (IS_CLICK_DOWN && snake.direction == RIGHT) {
+        snake.direction = DOWN;
+    }
+
+    // BTN_UP
+    if (IS_CLICK_UP && snake.direction == UP) {
+        snake.direction = LEFT;
+    } else if (IS_CLICK_UP && snake.direction == DOWN) {
+        snake.direction = RIGHT;
+    } else if (IS_CLICK_UP && snake.direction == LEFT) {
+        snake.direction = DOWN;
+    } else if (IS_CLICK_UP && snake.direction == RIGHT) {
+        snake.direction = UP;
+    }
+
+    // Speed
+    if (IS_CLICK_RIGHT && snake.speed > 50) {
+        snake.speed -= 50;
+    } else if (IS_CLICK_LEFT && snake.speed < 350) {
+        snake.speed += 50;
+    }
+
+    // Restart game
+    if (IS_CLICK_START_STOP) {
+        init_snake_body_variables();
+    }
+
+    // Clear interupt flags
+    PORTE->ISFR = BTNs_ALL_MASK;
+}
+    \end{lstlisting}
+
+
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% FUNCTIONALITY %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
     %%%%% Button interrupt handling %%%%%
 
 
-    \section{Functionality}\label{sec:functionality}
+    \section{Functionality \& Game Control}\label{sec:functionality}
 
-    \subsection{How to play}\label{subsec:functionality-of-the-game}
+    \subsection{About the Game}\label{subsec:functionality-of-the-game}
     The game is a single player game.
-
-    %%%%% Button control %%%%%
 
     \subsubsection{Game Control}\label{sbsubsec:controling}
     The game is controlled by the \textit{Fitkit3} built\-in buttons:
@@ -183,6 +272,8 @@
     If you want reset the game, press the button \textbf{SW6}, which sets
     the speed to the default value and places snake to the starting position.
 
+    \section{Demonstration of implemented game}\label{sec:demonstration}
+    The game is demonstrated in the video on this url: \textbf{https://youtu.be/V0ONHRM66mM}.
 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Conclusion %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -190,7 +281,7 @@
     \section{Conclusion}\label{sec:conclusion}
     The project was successfully completed and the game is working as expected.
     I managed to implement whole functionality of the game with some additional
-    features like speed up/down and reset\ref{subsubsec:controling}.
+    features like speed up/down and reset\ref{sbsubsec:controling}.
     In project I used the timer interrupt for controlling the snake moves
     and button interrupts for controlling the snake direction and speed.
 
